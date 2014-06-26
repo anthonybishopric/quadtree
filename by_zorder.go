@@ -1,9 +1,5 @@
 package quadtree
 
-import (
-	"math"
-)
-
 // sort.Sort(ByZOrder(nodes))
 type ByZOrder []Location
 
@@ -19,16 +15,12 @@ func (a ByZOrder) Less(i, j int) bool {
 	// Implement sort described in http://en.wikipedia.org/wiki/Z-order_(curve)#Efficiently_building_quadtrees
 	left, right := a[i], a[j]
 
-	leftLat := a.scaleLat(left.Lat)
-	rightLat := a.scaleLat(right.Lat)
+	leftLat, leftLon := left.Scaled()
+	rightLat, rightLon := right.Scaled()
 
 	// the most significant 1 in latXor is the highest bit that is different between the two lats
-	latXor := leftLat ^ rightLat
-
-	leftLon := a.scaleLon(left.Lon)
-	rightLon := a.scaleLon(right.Lon)
-
-	lonXor := leftLon ^ rightLon
+	latXor := int(leftLat ^ rightLat)
+	lonXor := int(leftLon ^ rightLon)
 
 	// test whether lat or lon has largest different most significant bit
 	lonIsBigger := latXor < lonXor && latXor < (latXor^lonXor)
@@ -38,15 +30,4 @@ func (a ByZOrder) Less(i, j int) bool {
 	} else {
 		return (leftLat - rightLat) < 0
 	}
-}
-
-// these functions integerize the lat/long space,
-// allowing us to order GeoNodes into a Z-order curve
-// using a simpler bitwise comparison.
-func (a ByZOrder) scaleLat(lat float64) int {
-	return int(((lat + 90) * math.Pow10(6)))
-}
-
-func (a ByZOrder) scaleLon(lon float64) int {
-	return int(((lon + 180) * math.Pow10(6)))
 }

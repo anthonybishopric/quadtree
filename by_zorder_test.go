@@ -1,7 +1,7 @@
 package quadtree
 
 import (
-	"fmt"
+	// "fmt"
 	. "github.com/anthonybishopric/gotcha"
 	"sort"
 	"testing"
@@ -28,8 +28,9 @@ func TestSortsLocations(t *testing.T) {
 		Location{39.920159, 116.396858},
 	}
 
+	debug := Locations(locations).Debug()
 	for i, a := range locations {
 		e := expected[i]
-		Assert(t).AreEqual(a, e, fmt.Sprintf("Expected %s to equal %s", a.String(), e.String()))
+		Assert(t).AreEqual(a, e, debug)
 	}
 }
